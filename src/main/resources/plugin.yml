@@ -1,0 +1,7 @@
+name: Bounty
+author: Prouge
+version: ${project.version}
+description: ${project.description}
+main: me.prouge.bounty.Bounty
+commands:
+  bounty:
