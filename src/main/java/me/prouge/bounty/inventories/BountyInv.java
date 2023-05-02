@@ -2,6 +2,7 @@ package me.prouge.bounty.inventories;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import me.prouge.bounty.managers.BountyManager;
 import me.prouge.bounty.utils.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -10,10 +11,14 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import javax.inject.Inject;
 import java.lang.reflect.Field;
 import java.util.UUID;
 
 public class BountyInv {
+
+    @Inject
+    private BountyManager bountyManager;
 
 
     public void openInventoryToPlayer(final Player player) {
@@ -21,6 +26,16 @@ public class BountyInv {
         for (int i = 45; i < 54; i++) {
             inventory.setItem(i, new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("§b").toItemStack());
         }
+
+        if (bountyManager.getAllBounties().size() == 0) {
+            inventory.setItem(22, new ItemBuilder(createCustomSkull(
+     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3Jh" +
+             "ZnQubmV0L3RleHR1cmUvMGViZTdlNTIxN" +
+             "TE2OWE2OTlhY2M2Y2VmYTdiNzNmZGIxMDhkYjg3YmI2ZGFlMjg0OWZiZTI0NzE0YjI3In19fQ"
+            ))
+                    .setName("§7Zurzeit hat es keine Kopfgeld aufträge...").toItemStack());
+        }
+
 
         inventory.setItem(49, new ItemBuilder(createCustomSkull(
                 "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90Z" +
@@ -80,13 +95,12 @@ public class BountyInv {
         }
 
 
-
-        inventory.setItem(20, new ItemBuilder(createCustomSkull(
+        inventory.setItem(12, new ItemBuilder(createCustomSkull(
                 "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh" +
                         "0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDk5ODBjMWQyMTE4MDlhO" +
                         "WI2NTY1MDg4ZjU2YTM4ZjJlZjQ5MTE1YzEwN" +
                         "TRmYTY2MjQ1MTIyZTllZWVkZWNjMiJ9fX0")).setName("§eBestätigen").toItemStack());
-        inventory.setItem(21, new ItemBuilder(createCustomSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6" +
+        inventory.setItem(14, new ItemBuilder(createCustomSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6" +
                 "Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTljZGI5YWYzOGNm" +
                 "NDFkYWE1M2JjOGNkYTc2NjVjNTA5NjMyZDE0ZTY3OGYwZjE5ZjI2M2Y0NmU1NDFkOGEzMCJ9fX0")).setName("§cAbbrechen").toItemStack());
         player.openInventory(inventory);

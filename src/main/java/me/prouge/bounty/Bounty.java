@@ -8,6 +8,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.inject.Inject;
 import java.util.Objects;
 
+import static org.spigotmc.SpigotConfig.config;
+
 public class Bounty extends JavaPlugin {
 
     @Inject
@@ -21,6 +23,9 @@ public class Bounty extends JavaPlugin {
     public void onEnable() {
         new InjectionModule(this);
         registerCommands();
+
+        config.options().copyDefaults(true);
+        saveConfig();
 
         getServer().getPluginManager().registerEvents(inventoryHandler, this);
     }

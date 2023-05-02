@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -38,6 +39,10 @@ public class InventoryHandler implements Listener {
             event.setCancelled(true);
 
             if (event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
+                SkullMeta skullMeta = (SkullMeta) event.getCurrentItem().getItemMeta();
+                bountyManager.addTemporaryBounty((Player) event.getWhoClicked(),
+                        Objects.requireNonNull(Objects.requireNonNull(skullMeta).getOwningPlayer()).getPlayer());
+
                 bountyInv.openSetRewardInventory((Player) event.getWhoClicked());
                 return;
             }
@@ -70,7 +75,12 @@ public class InventoryHandler implements Listener {
 
         if (event.getView().getTitle().equals("§c§lKopfgelder > §6Bestätigen")) {
             event.setCancelled(true);
-            if (event.getRawSlot() == 21) {
+            if (event.getRawSlot() == 12) {
+                bountyManager.createBounty((Player) event.getWhoClicked());
+                ((Player) event.getWhoClicked()).closeInventory();
+            }
+
+            if (event.getRawSlot() == 14) {
                 bountyManager.dropTemporaryInventory((Player) event.getWhoClicked());
                 ((Player) event.getWhoClicked()).closeInventory();
             }
