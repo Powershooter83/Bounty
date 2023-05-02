@@ -3,5 +3,6 @@ author: Prouge
 version: ${project.version}
 description: ${project.description}
 main: me.prouge.bounty.Bounty
+api-version: 1.13
 commands:
   bounty:
