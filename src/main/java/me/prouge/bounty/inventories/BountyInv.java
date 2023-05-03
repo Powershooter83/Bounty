@@ -29,11 +29,17 @@ public class BountyInv {
 
         if (bountyManager.getAllBounties().size() == 0) {
             inventory.setItem(22, new ItemBuilder(createCustomSkull(
-     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3Jh" +
-             "ZnQubmV0L3RleHR1cmUvMGViZTdlNTIxN" +
-             "TE2OWE2OTlhY2M2Y2VmYTdiNzNmZGIxMDhkYjg3YmI2ZGFlMjg0OWZiZTI0NzE0YjI3In19fQ"
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3Jh" +
+                            "ZnQubmV0L3RleHR1cmUvMGViZTdlNTIxN" +
+                            "TE2OWE2OTlhY2M2Y2VmYTdiNzNmZGIxMDhkYjg3YmI2ZGFlMjg0OWZiZTI0NzE0YjI3In19fQ"
             ))
                     .setName("§7Zurzeit hat es keine Kopfgeld aufträge...").toItemStack());
+        }
+
+        int slot = 0;
+        for (Player bountyPlayer : bountyManager.getAllBounties()) {
+            inventory.setItem(slot, getPlayerSkull(bountyPlayer));
+            slot++;
         }
 
 
@@ -106,6 +112,11 @@ public class BountyInv {
         player.openInventory(inventory);
 
     }
+
+    public void openRewardInventory(Player player, Player victim) {
+
+    }
+
 
     private ItemStack getPlayerSkull(Player player) {
         ItemStack skullItem = new ItemStack(Material.PLAYER_HEAD);

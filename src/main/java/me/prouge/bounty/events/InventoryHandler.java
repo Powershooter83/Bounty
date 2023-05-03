@@ -31,6 +31,16 @@ public class InventoryHandler implements Listener {
 
             if (event.getRawSlot() == 49) {
                 bountyInv.openSetBountyInventory((Player) event.getWhoClicked());
+                return;
+            }
+
+            if (event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
+                SkullMeta skullMeta = (SkullMeta) event.getCurrentItem().getItemMeta();
+                bountyInv.openRewardInventory((Player) event.getWhoClicked(),
+
+                        skullMeta.getOwningPlayer().getPlayer());
+                bountyInv.openSetRewardInventory((Player) event.getWhoClicked());
+                return;
             }
         }
 
@@ -38,6 +48,10 @@ public class InventoryHandler implements Listener {
         if (event.getView().getTitle().equals("§c§lKopfgelder > §7auswahl")) {
             event.setCancelled(true);
 
+            if (event.getRawSlot() == 49) {
+                bountyInv.openInventoryToPlayer((Player) event.getWhoClicked());
+                return;
+            }
             if (event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
                 SkullMeta skullMeta = (SkullMeta) event.getCurrentItem().getItemMeta();
                 bountyManager.addTemporaryBounty((Player) event.getWhoClicked(),
@@ -47,9 +61,7 @@ public class InventoryHandler implements Listener {
                 return;
             }
 
-            if (event.getRawSlot() == 49) {
-                bountyInv.openInventoryToPlayer((Player) event.getWhoClicked());
-            }
+
         }
         if (event.getView().getTitle().equals("§c§lKopfgelder > §6Reward")) {
             if (event.getRawSlot() >= 45 && event.getRawSlot() < 54) {
