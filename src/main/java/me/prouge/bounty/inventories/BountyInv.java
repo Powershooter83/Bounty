@@ -29,6 +29,7 @@ public class BountyInv {
         }
 
         if (bountyManager.getAllBounties().size() == 0) {
+
             inventory.setItem(22, new ItemBuilder(createCustomSkull(Heads.ZERO.texture))
                     .setName("§7Zurzeit hat es keine Kopfgeld aufträge...").toItemStack());
         }
@@ -40,7 +41,7 @@ public class BountyInv {
         }
 
 
-        inventory.setItem(49, new ItemBuilder(createCustomSkull(Heads.ZERO.texture))
+        inventory.setItem(49, new ItemBuilder(createCustomSkull(Heads.CREATE.texture))
                 .setName("§cKopfgeld platzieren §7{Rechtsklick}")
                 .setLore("§8➥ §7Setze ein Kopfgeld, sowie eine Belohnung",
                         "   §7auf einen Spieler aus, um andere Spieler",
