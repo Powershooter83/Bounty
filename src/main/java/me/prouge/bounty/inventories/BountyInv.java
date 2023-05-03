@@ -3,6 +3,7 @@ package me.prouge.bounty.inventories;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.prouge.bounty.managers.BountyManager;
+import me.prouge.bounty.utils.Heads;
 import me.prouge.bounty.utils.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -28,11 +29,7 @@ public class BountyInv {
         }
 
         if (bountyManager.getAllBounties().size() == 0) {
-            inventory.setItem(22, new ItemBuilder(createCustomSkull(
-                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3Jh" +
-                            "ZnQubmV0L3RleHR1cmUvMGViZTdlNTIxN" +
-                            "TE2OWE2OTlhY2M2Y2VmYTdiNzNmZGIxMDhkYjg3YmI2ZGFlMjg0OWZiZTI0NzE0YjI3In19fQ"
-            ))
+            inventory.setItem(22, new ItemBuilder(createCustomSkull(Heads.ZERO.texture))
                     .setName("§7Zurzeit hat es keine Kopfgeld aufträge...").toItemStack());
         }
 
@@ -43,11 +40,7 @@ public class BountyInv {
         }
 
 
-        inventory.setItem(49, new ItemBuilder(createCustomSkull(
-                "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90Z" +
-                        "Xh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2VkZDIwYmU5MzUyM" +
-                        "Dk0OWU2Y2U3ODlkYzRmNDNlZmFlYjI4YzcxN2VlNmJmY2JiZ" +
-                        "TAyNzgwMTQyZjcxNiJ9fX0"))
+        inventory.setItem(49, new ItemBuilder(createCustomSkull(Heads.ZERO.texture))
                 .setName("§cKopfgeld platzieren §7{Rechtsklick}")
                 .setLore("§8➥ §7Setze ein Kopfgeld, sowie eine Belohnung",
                         "   §7auf einen Spieler aus, um andere Spieler",
@@ -68,11 +61,7 @@ public class BountyInv {
             inventory.setItem(i, new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("§b").toItemStack());
         }
 
-        inventory.setItem(49, new ItemBuilder(createCustomSkull(
-                "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90Z" +
-                        "Xh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODY1MmUyY" +
-                        "jkzNmNhODAyNmJkMjg2NTFkN2M5ZjI4MTlkMmU5MjM2OTc3M" +
-                        "zRkMThkZmRiMTM1NTBmOGZkYWQ1ZiJ9fX0="
+        inventory.setItem(49, new ItemBuilder(createCustomSkull(Heads.BACK.texture
         )).setName("§7Zurück").toItemStack());
         player.openInventory(inventory);
 
@@ -85,11 +74,7 @@ public class BountyInv {
             inventory.setItem(i, new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("§b").toItemStack());
         }
 
-        inventory.setItem(49, new ItemBuilder(createCustomSkull(
-                "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJ" +
-                        "lcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTMwZjQ1MzdkMjE0ZDM4NjY2ZTYzM" +
-                        "DRlOWM4NTFjZDZmN2U0MWEwZWI3YzI1MDQ5YzlkMjJjOGM1ZjY1NDV" +
-                        "kZiJ9fX0=")).setName("§6Speichern").toItemStack());
+        inventory.setItem(49, new ItemBuilder(createCustomSkull(Heads.SAVE.texture)).setName("§6Speichern").toItemStack());
         player.openInventory(inventory);
     }
 
@@ -101,14 +86,8 @@ public class BountyInv {
         }
 
 
-        inventory.setItem(12, new ItemBuilder(createCustomSkull(
-                "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh" +
-                        "0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDk5ODBjMWQyMTE4MDlhO" +
-                        "WI2NTY1MDg4ZjU2YTM4ZjJlZjQ5MTE1YzEwN" +
-                        "TRmYTY2MjQ1MTIyZTllZWVkZWNjMiJ9fX0")).setName("§eBestätigen").toItemStack());
-        inventory.setItem(14, new ItemBuilder(createCustomSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6" +
-                "Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTljZGI5YWYzOGNm" +
-                "NDFkYWE1M2JjOGNkYTc2NjVjNTA5NjMyZDE0ZTY3OGYwZjE5ZjI2M2Y0NmU1NDFkOGEzMCJ9fX0")).setName("§cAbbrechen").toItemStack());
+        inventory.setItem(12, new ItemBuilder(createCustomSkull(Heads.CONFIRM.texture)).setName("§eBestätigen").toItemStack());
+        inventory.setItem(14, new ItemBuilder(createCustomSkull(Heads.CANCEL.texture)).setName("§cAbbrechen").toItemStack());
         player.openInventory(inventory);
 
     }
