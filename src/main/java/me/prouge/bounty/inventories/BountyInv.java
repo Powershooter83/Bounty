@@ -94,7 +94,10 @@ public class BountyInv {
     }
 
     public void openRewardInventory(Player player, Player victim) {
+        Inventory inventory = Bukkit.createInventory(null, 54, "§c§lKopfgeld > §b" + victim.getName());
+        bountyManager.getRewards(victim).forEach(inventory::addItem);
 
+        player.openInventory(inventory);
     }
 
 

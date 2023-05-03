@@ -41,8 +41,12 @@ public class BountyManager {
         plugin.saveConfig();
     }
 
-    public void getRewards() {
+    public List<ItemStack> getRewards(Player victim) {
+        List<ItemStack> itemStacks = new ArrayList<>();
 
+        plugin.getConfig().getList(victim.getUniqueId() + ".items").forEach(itemStack -> itemStacks.add((ItemStack) itemStack));
+
+        return itemStacks;
     }
 
     public void addTemporaryBounty(Player player, Player victim) {

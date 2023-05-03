@@ -26,20 +26,24 @@ public class InventoryHandler implements Listener {
 
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent event) {
+        if (event.getCurrentItem() == null) {
+            return;
+        }
+
+        Player player = (Player) event.getWhoClicked();
+
+
         if (event.getView().getTitle().equals("§c§lKopfgelder") && event.getRawSlot() < 54) {
             event.setCancelled(true);
 
             if (event.getRawSlot() == 49) {
-                bountyInv.openSetBountyInventory((Player) event.getWhoClicked());
+                bountyInv.openSetBountyInventory(player);
                 return;
             }
 
             if (event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
                 SkullMeta skullMeta = (SkullMeta) event.getCurrentItem().getItemMeta();
-                bountyInv.openRewardInventory((Player) event.getWhoClicked(),
-
-                        skullMeta.getOwningPlayer().getPlayer());
-                bountyInv.openSetRewardInventory((Player) event.getWhoClicked());
+                bountyInv.openRewardInventory(player, skullMeta.getOwningPlayer().getPlayer());
                 return;
             }
         }
@@ -49,15 +53,15 @@ public class InventoryHandler implements Listener {
             event.setCancelled(true);
 
             if (event.getRawSlot() == 49) {
-                bountyInv.openInventoryToPlayer((Player) event.getWhoClicked());
+                bountyInv.openInventoryToPlayer(player);
                 return;
             }
             if (event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
                 SkullMeta skullMeta = (SkullMeta) event.getCurrentItem().getItemMeta();
-                bountyManager.addTemporaryBounty((Player) event.getWhoClicked(),
+                bountyManager.addTemporaryBounty(player,
                         Objects.requireNonNull(Objects.requireNonNull(skullMeta).getOwningPlayer()).getPlayer());
 
-                bountyInv.openSetRewardInventory((Player) event.getWhoClicked());
+                bountyInv.openSetRewardInventory(player);
                 return;
             }
 
@@ -78,9 +82,9 @@ public class InventoryHandler implements Listener {
                     }
                 }
 
-                bountyManager.addTemporaryInventory((Player) event.getWhoClicked(),
+                bountyManager.addTemporaryInventory(player,
                         itemsToAdd);
-                bountyInv.openConfirmBountyInventory((Player) event.getWhoClicked());
+                bountyInv.openConfirmBountyInventory(player);
             }
 
         }
@@ -88,13 +92,13 @@ public class InventoryHandler implements Listener {
         if (event.getView().getTitle().equals("§c§lKopfgelder > §6Bestätigen")) {
             event.setCancelled(true);
             if (event.getRawSlot() == 12) {
-                bountyManager.createBounty((Player) event.getWhoClicked());
-                ((Player) event.getWhoClicked()).closeInventory();
+                bountyManager.createBounty(player);
+                (player).closeInventory();
             }
 
             if (event.getRawSlot() == 14) {
-                bountyManager.dropTemporaryInventory((Player) event.getWhoClicked());
-                ((Player) event.getWhoClicked()).closeInventory();
+                bountyManager.dropTemporaryInventory(player);
+                (player).closeInventory();
             }
 
         }
