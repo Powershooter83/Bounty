@@ -40,9 +40,22 @@ public class BountyInv {
             slot++;
         }
 
-
+        inventory.setItem(47, new ItemBuilder(createCustomSkull(Heads.INFORMATION.texture))
+                .setName("§cMeine Kopfgelder §7{Rechtsklick}")
+                .setLore("§8➥ §7Setze ein Kopfgeld, sowie eine Belohnung",
+                        "   §7auf einen Spieler aus, um andere Spieler",
+                        "   §7anzulocken, die ihn versuchen zu töten!",
+                        "",
+                        "§c§lACHTUNG", "§cEin platziertes Kopfgeld kann entfernt werden,", "§cdie gesetzten Items gehen jedoch verloren!").toItemStack());
         inventory.setItem(49, new ItemBuilder(createCustomSkull(Heads.CREATE.texture))
                 .setName("§cKopfgeld platzieren §7{Rechtsklick}")
+                .setLore("§8➥ §7Setze ein Kopfgeld, sowie eine Belohnung",
+                        "   §7auf einen Spieler aus, um andere Spieler",
+                        "   §7anzulocken, die ihn versuchen zu töten!",
+                        "",
+                        "§c§lACHTUNG", "§cEin platziertes Kopfgeld kann entfernt werden,", "§cdie gesetzten Items gehen jedoch verloren!").toItemStack());
+        inventory.setItem(51, new ItemBuilder(createCustomSkull(Heads.ARCHIVE.texture))
+                .setName("§cArchive §7{Rechtsklick}")
                 .setLore("§8➥ §7Setze ein Kopfgeld, sowie eine Belohnung",
                         "   §7auf einen Spieler aus, um andere Spieler",
                         "   §7anzulocken, die ihn versuchen zu töten!",
