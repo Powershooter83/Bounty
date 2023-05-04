@@ -37,22 +37,6 @@ public class BountyInv {
         Inventory inventory = Bukkit.createInventory(null, 54, "§c§lKopfgelder > Archive " + page);
 
 
-        switch (order) {
-            case DEATH_DATE_ASC:
-                inventory.setItem(40, new ItemBuilder(createCustomSkull(Heads.ARROW_UP.texture)).setName("ASC").toItemStack());
-                Collections.sort(archiveBounties, Comparator.comparing(BountyPlayer::getKillDate));
-                break;
-            case DEATH_DATE_DESC:
-                inventory.setItem(40,
-                        new ItemBuilder(createCustomSkull(Heads.ARROW_DOWN.texture))
-                                .setName("DESC").toItemStack());
-                Collections.sort(archiveBounties, Comparator.comparing(BountyPlayer::getKillDate).reversed());
-                break;
-            default:
-                break;
-        }
-
-
         for (int i = 45; i < 54; i++) {
             inventory.setItem(i, new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("§b").toItemStack());
         }
@@ -60,6 +44,21 @@ public class BountyInv {
         if (archiveBounties.size() == 0) {
             inventory.setItem(22, new ItemBuilder(createCustomSkull(Heads.ZERO.texture))
                     .setName("§7Es gibt noch keine ausgeführten Aufträge...").toItemStack());
+        } else {
+            switch (order) {
+                case DEATH_DATE_ASC -> {
+                    inventory.setItem(40, new ItemBuilder(createCustomSkull(Heads.ARROW_UP.texture)).setName("§7Aufsteigend nach Datum").toItemStack());
+                    Collections.sort(archiveBounties, Comparator.comparing(BountyPlayer::getKillDate));
+                }
+                case DEATH_DATE_DESC -> {
+                    inventory.setItem(40,
+                            new ItemBuilder(createCustomSkull(Heads.ARROW_DOWN.texture))
+                                    .setName("§7Absteigend nach Datum").toItemStack());
+                    Collections.sort(archiveBounties, Comparator.comparing(BountyPlayer::getKillDate).reversed());
+                }
+                default -> {
+                }
+            }
         }
 
 
@@ -136,7 +135,7 @@ public class BountyInv {
 
         int slot = 10;
         for (int i = start; i < end && i < archiveBounties.size(); i++) {
-            if (archiveBounties.get(i).getUuid().toString().equals(player.getUniqueId().toString())) {
+            if (archiveBounties.get(i).getKiller().toString().equals(player.getUniqueId().toString())) {
                 inventory.setItem(slot, new ItemBuilder(getPlayerSkull(Bukkit.getOfflinePlayer(archiveBounties.get(i).getUuid())))
                         .setName("§b" + Bukkit.getOfflinePlayer(archiveBounties.get(i).getUuid()).getName())
                         .setLore("§8» §7Auftrag von: §c" + Bukkit.getOfflinePlayer(UUID.fromString(archiveBounties.get(i).getKiller().toString())).getName(),
@@ -144,7 +143,6 @@ public class BountyInv {
                                 "§7{Shift + Rechtsklick} um das Kopfgeld zu §c§lLÖSCHEN!", "§8§o" + archiveBounties.get(i).getHash())
 
                         .toItemStack());
-                continue;
             } else {
                 inventory.setItem(slot, new ItemBuilder(getPlayerSkull(Bukkit.getOfflinePlayer(archiveBounties.get(i).getUuid())))
                         .setName("§b" + Bukkit.getOfflinePlayer(archiveBounties.get(i).getUuid()).getName())
@@ -221,7 +219,7 @@ public class BountyInv {
 
         int index = 10;
         for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
-            inventory.setItem(index, getPlayerSkull(p));
+            inventory.setItem(index, new ItemBuilder(getPlayerSkull(p)).setName("§b" + p.getName()).toItemStack());
             index++;
         }
         for (int i = 45; i < 54; i++) {
@@ -259,9 +257,21 @@ public class BountyInv {
 
     }
 
-    public void openRewardInventory(Player player, UUID victim) {
-        Inventory inventory = Bukkit.createInventory(null, 54, "§c§lKopfgeld > §b" + Bukkit.getOfflinePlayer(victim).getName());
-        bountyManager.getRewards(victim).forEach(inventory::addItem);
+    public void openRewardInventory(Player player, String hash) {
+        BountyPlayer bountyPlayerFound = null;
+        for (BountyPlayer bountyPlayer : bountyManager.getAllBounties()) {
+            if (bountyPlayer.getHash().equals(hash)) {
+                bountyPlayerFound = bountyPlayer;
+                break;
+            }
+        }
+        if (bountyPlayerFound == null) {
+            return;
+        }
+
+
+        Inventory inventory = Bukkit.createInventory(null, 54, "§c§lKopfgeld > §b" + Bukkit.getOfflinePlayer(bountyPlayerFound.getUuid()).getName());
+        bountyManager.getRewards(hash).forEach(inventory::addItem);
 
         for (int i = 45; i < 54; i++) {
             inventory.setItem(i, new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("§b").toItemStack());

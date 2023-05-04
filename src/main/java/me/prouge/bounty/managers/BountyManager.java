@@ -5,7 +5,6 @@ import com.google.inject.Singleton;
 import me.prouge.bounty.Bounty;
 import me.prouge.bounty.utils.BountyPlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +13,10 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 
 @Singleton
@@ -42,7 +44,6 @@ public class BountyManager {
     }
 
     public void removeBounty(BountyPlayer bounty) {
-        System.out.println(bounty.getHash());
         plugin.getConfig().set("bounty." + bounty.getHash(), null);
         plugin.saveConfig();
     }
@@ -80,10 +81,9 @@ public class BountyManager {
         }
 
         String hash = generateRandomHash();
-        while(bountySection.getKeys(false).contains(hash)) {
+        while (bountySection.getKeys(false).contains(hash)) {
             hash = generateRandomHash();
         }
-
 
 
         ConfigurationSection newBountySection = bountySection.createSection(hash);
@@ -93,6 +93,12 @@ public class BountyManager {
         newBountySection.set("items", items.get(player));
 
         plugin.saveConfig();
+
+        Bukkit.getOnlinePlayers().forEach(p ->
+                p.sendMessage("§8[§cKopfgeld§8] §7» §b" + player.getName()
+                        + " §7hat ein Kopfgeld auf §c" + Bukkit.getOfflinePlayer(bountyPlayer).getName() + " §7ausgesetzt!"));
+
+        dropTemporaryInventory(player);
     }
 
     public String generateRandomHash() {
@@ -100,19 +106,36 @@ public class BountyManager {
         return new BigInteger(130, random).toString(32);
     }
 
-    public List<ItemStack> getRewards(UUID victim) {
+    public List<ItemStack> getRewards(String hash) {
         List<ItemStack> itemStacks = new ArrayList<>();
 
         for (String key : plugin.getConfig().getConfigurationSection("bounty").getKeys(false)) {
-            if (plugin.getConfig().get("bounty." + key + ".victim").equals(victim.toString())) {
+            if (key.equals(hash)) {
                 plugin.getConfig().getList("bounty." + key + ".items").forEach(itemStack -> itemStacks.add((ItemStack) itemStack));
             }
+
+        }
+        return itemStacks;
+    }
+
+    public List<ItemStack> getRewards(UUID uuid) {
+        List<ItemStack> itemStacks = new ArrayList<>();
+
+        for (String key : plugin.getConfig().getConfigurationSection("bounty").getKeys(false)) {
+            if (plugin.getConfig().get("bounty." + key + ".victim").toString().equals(uuid.toString())) {
+                plugin.getConfig().getList("bounty." + key + ".items").forEach(itemStack -> itemStacks.add((ItemStack) itemStack));
+            }
+
         }
         return itemStacks;
     }
 
     public void addTemporaryBounty(Player player, UUID victim) {
         playerBountyTemporary.put(player, victim);
+    }
+
+    public void removeTemporaryBounty(Player player) {
+        playerBountyTemporary.remove(player);
     }
 
 
@@ -123,6 +146,12 @@ public class BountyManager {
     public void dropTemporaryInventory(Player player) {
         items.get(player).forEach(itemStack -> player.getInventory().addItem(itemStack));
         items.remove(player);
+        removeTemporaryBounty(player);
+
+    }
+
+    public boolean hasTemporaryInventory(Player player) {
+        return items.containsKey(player);
     }
 
 
