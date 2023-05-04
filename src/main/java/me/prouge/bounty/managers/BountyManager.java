@@ -3,53 +3,109 @@ package me.prouge.bounty.managers;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import me.prouge.bounty.Bounty;
+import me.prouge.bounty.utils.BountyPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 
 @Singleton
 public class BountyManager {
 
     public HashMap<Player, List<ItemStack>> items = new HashMap<>();
-    public HashMap<Player, Player> playerBountyTemporary = new HashMap<>();
+    public HashMap<Player, UUID> playerBountyTemporary = new HashMap<>();
     @Inject
     private Bounty plugin;
 
-    public List<Player> getAllBounties() {
-        List<Player> players = new ArrayList<>();
+    public List<BountyPlayer> getAllBounties() {
+        List<BountyPlayer> players = new ArrayList<>();
 
-        for (String key : plugin.getConfig().getKeys(false)) {
-            UUID uuid = UUID.fromString(key);
-            players.add(Bukkit.getPlayer(uuid));
+
+        if (plugin.getConfig().getConfigurationSection("bounty") == null) {
+            return players;
+        }
+
+        for (String key : plugin.getConfig().getConfigurationSection("bounty").getKeys(false)) {
+            UUID victim = UUID.fromString(plugin.getConfig().get("bounty." + key + ".victim").toString());
+            UUID killer = UUID.fromString(plugin.getConfig().get("bounty." + key + ".client").toString());
+            players.add(new BountyPlayer(victim, killer, null, null));
         }
         return players;
     }
 
-    public void createBounty(Player player) {
-        Player bountyPlayer = playerBountyTemporary.get(player);
 
-        plugin.getConfig().set(bountyPlayer.getUniqueId() + ".client",
-                player.getUniqueId().toString());
-        plugin.getConfig().set(bountyPlayer.getUniqueId() + ".items",
-                items.get(player));
+    public List<BountyPlayer> getArchiveBounties() {
+        List<BountyPlayer> players = new ArrayList<>();
+
+        if (plugin.getConfig().getConfigurationSection("archive") == null) {
+            return players;
+        }
+
+        for (String key : plugin.getConfig().getConfigurationSection("archive").getKeys(false)) {
+            UUID uuid = UUID.fromString(plugin.getConfig().get("archive." + key + ".victim").toString());
+
+            List<String> clients = new ArrayList<>();
+            for (Object o : plugin.getConfig().getList("archive." + key + ".clients")) {
+                clients.add(String.valueOf(o));
+            }
+
+            players.add(new BountyPlayer(uuid,
+                    UUID.fromString(plugin.getConfig().get("archive." + key + ".killer").toString()),
+                    LocalDateTime.parse(plugin.getConfig().get("archive." + key + ".killDate").toString(),
+                            DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy")), clients));
+        }
+        return players;
+    }
+
+
+    public void createBounty(Player player) {
+        UUID bountyPlayer = playerBountyTemporary.get(player);
+        ConfigurationSection bountySection = plugin.getConfig().getConfigurationSection("bounty");
+        if (bountySection == null) {
+            bountySection = plugin.getConfig().createSection("bounty");
+        }
+
+        String hash = generateRandomHash();
+        while(bountySection.getKeys(false).contains(hash)) {
+            hash = generateRandomHash();
+        }
+
+
+
+        ConfigurationSection newBountySection = bountySection.createSection(hash);
+
+        newBountySection.set("victim", bountyPlayer.toString());
+        newBountySection.set("client", player.getUniqueId().toString());
+        newBountySection.set("items", items.get(player));
+
         plugin.saveConfig();
     }
 
-    public List<ItemStack> getRewards(Player victim) {
+    public String generateRandomHash() {
+        SecureRandom random = new SecureRandom();
+        return new BigInteger(130, random).toString(32);
+    }
+
+    public List<ItemStack> getRewards(UUID victim) {
         List<ItemStack> itemStacks = new ArrayList<>();
 
-        plugin.getConfig().getList(victim.getUniqueId() + ".items").forEach(itemStack -> itemStacks.add((ItemStack) itemStack));
-
+        for (String key : plugin.getConfig().getConfigurationSection("bounty").getKeys(false)) {
+            if (plugin.getConfig().get("bounty." + key + ".victim").equals(victim.toString())) {
+                plugin.getConfig().getList("bounty." + key + ".items").forEach(itemStack -> itemStacks.add((ItemStack) itemStack));
+            }
+        }
         return itemStacks;
     }
 
-    public void addTemporaryBounty(Player player, Player victim) {
+    public void addTemporaryBounty(Player player, UUID victim) {
         playerBountyTemporary.put(player, victim);
     }
 

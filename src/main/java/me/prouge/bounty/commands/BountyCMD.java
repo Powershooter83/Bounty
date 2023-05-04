@@ -15,7 +15,7 @@ public class BountyCMD implements CommandExecutor {
 
     @Override
     public boolean onCommand(final CommandSender sender, final Command cmd, final String s, final String[] args) {
-        bountyInv.openInventoryToPlayer((Player) sender);
+        bountyInv.openInventoryToPlayer((Player) sender, 1);
         return false;
     }
 }
