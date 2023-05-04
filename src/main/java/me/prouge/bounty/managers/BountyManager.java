@@ -36,9 +36,15 @@ public class BountyManager {
         for (String key : plugin.getConfig().getConfigurationSection("bounty").getKeys(false)) {
             UUID victim = UUID.fromString(plugin.getConfig().get("bounty." + key + ".victim").toString());
             UUID killer = UUID.fromString(plugin.getConfig().get("bounty." + key + ".client").toString());
-            players.add(new BountyPlayer(victim, killer, null, null));
+            players.add(new BountyPlayer(victim, killer, null, null, key));
         }
         return players;
+    }
+
+    public void removeBounty(BountyPlayer bounty) {
+        System.out.println(bounty.getHash());
+        plugin.getConfig().set("bounty." + bounty.getHash(), null);
+        plugin.saveConfig();
     }
 
 
@@ -60,7 +66,7 @@ public class BountyManager {
             players.add(new BountyPlayer(uuid,
                     UUID.fromString(plugin.getConfig().get("archive." + key + ".killer").toString()),
                     LocalDateTime.parse(plugin.getConfig().get("archive." + key + ".killDate").toString(),
-                            DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy")), clients));
+                            DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy")), clients, null));
         }
         return players;
     }

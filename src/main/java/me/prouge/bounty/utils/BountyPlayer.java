@@ -16,4 +16,6 @@ public class BountyPlayer {
     private LocalDateTime killDate;
     private List<String> clients;
 
+    private String hash;
+
 }

@@ -2,6 +2,7 @@ package me.prouge.bounty.events;
 
 import me.prouge.bounty.inventories.BountyInv;
 import me.prouge.bounty.managers.BountyManager;
+import me.prouge.bounty.utils.BountyPlayer;
 import me.prouge.bounty.utils.OrderBy;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,6 +25,7 @@ public class InventoryHandler implements Listener {
 
     @Inject
     private BountyManager bountyManager;
+
 
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent event) {
@@ -154,6 +156,23 @@ public class InventoryHandler implements Listener {
                 return;
             }
 
+            if (event.getCurrentItem().getType() == Material.PLAYER_HEAD && event.isShiftClick()) {
+                ItemStack itemstack = event.getCurrentItem();
+                List<String> lore = itemstack.getItemMeta().getLore();
+                String key = lore.get(lore.size() - 1).substring(4);
+                for (BountyPlayer bountyPlayer : bountyManager.getAllBounties()) {
+                    if (bountyPlayer.getHash().equals(key) && bountyPlayer.getKiller().toString().equals(player.getUniqueId().toString())) {
+                        bountyManager.removeBounty(bountyPlayer);
+                        bountyInv.openInventoryToPlayer(player, currentPage);
+                        player.sendMessage("Du hast bounty entfernt!");
+                        return;
+                    }
+
+                }
+
+
+            }
+
             if (event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
                 SkullMeta skullMeta = (SkullMeta) event.getCurrentItem().getItemMeta();
                 if (skullMeta.getOwningPlayer() == null) {
@@ -162,15 +181,6 @@ public class InventoryHandler implements Listener {
 
                 bountyInv.openRewardInventory(player, skullMeta.getOwningPlayer().getUniqueId());
             }
-        }
-
-        if (event.getView().getTitle().startsWith("§c§lKopfgeld >") && event.getRawSlot() < 54) {
-            event.setCancelled(true);
-            if (event.getRawSlot() == 49) {
-                bountyInv.openInventoryToPlayer(player, 1);
-                return;
-            }
-
         }
 
     }

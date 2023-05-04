@@ -136,7 +136,23 @@ public class BountyInv {
 
         int slot = 10;
         for (int i = start; i < end && i < archiveBounties.size(); i++) {
-            inventory.setItem(slot, getPlayerSkull(Bukkit.getOfflinePlayer(archiveBounties.get(i).getUuid())));
+            if (archiveBounties.get(i).getUuid().toString().equals(player.getUniqueId().toString())) {
+                inventory.setItem(slot, new ItemBuilder(getPlayerSkull(Bukkit.getOfflinePlayer(archiveBounties.get(i).getUuid())))
+                        .setName("§b" + Bukkit.getOfflinePlayer(archiveBounties.get(i).getUuid()).getName())
+                        .setLore("§8» §7Auftrag von: §c" + Bukkit.getOfflinePlayer(UUID.fromString(archiveBounties.get(i).getKiller().toString())).getName(),
+                                "", "§7{Rechtsklick} um das Kopfgeld anzusehen!",
+                                "§7{Shift + Rechtsklick} um das Kopfgeld zu §c§lLÖSCHEN!", "§8§o" + archiveBounties.get(i).getHash())
+
+                        .toItemStack());
+                continue;
+            } else {
+                inventory.setItem(slot, new ItemBuilder(getPlayerSkull(Bukkit.getOfflinePlayer(archiveBounties.get(i).getUuid())))
+                        .setName("§b" + Bukkit.getOfflinePlayer(archiveBounties.get(i).getUuid()).getName())
+                        .setLore("§8» §7Auftrag von: §c" + Bukkit.getOfflinePlayer(UUID.fromString(archiveBounties.get(i).getKiller().toString())).getName(),
+                                "", "§7{Rechtsklick} um das Kopfgeld anzusehen!", "§8§o" + archiveBounties.get(i).getHash())
+                        .toItemStack());
+            }
+
             if (slot == 16 || slot == 25 || slot == 34) {
                 slot += 3;
             } else {
@@ -247,7 +263,7 @@ public class BountyInv {
         Inventory inventory = Bukkit.createInventory(null, 54, "§c§lKopfgeld > §b" + Bukkit.getOfflinePlayer(victim).getName());
         bountyManager.getRewards(victim).forEach(inventory::addItem);
 
-        for (int i = 0; i < 27; i++) {
+        for (int i = 45; i < 54; i++) {
             inventory.setItem(i, new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName("§b").toItemStack());
         }
 
